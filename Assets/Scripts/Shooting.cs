@@ -10,12 +10,6 @@ public class Shooting : MonoBehaviour
 
     void Update()
     {
-        HandleShooting();
-    }
-
-    void HandleShooting()
-    {
-        // Mouse esquerdo ou tecla Space
         bool fireInput = Input.GetMouseButton(0) || Input.GetKey(KeyCode.Space);
 
         if (fireInput && Time.time >= nextFireTime)
@@ -33,6 +27,17 @@ public class Shooting : MonoBehaviour
             return;
         }
 
-        Instantiate(projectilePrefab, firePoint.position, firePoint.rotation);
+        // Direção = direção da CÂMERA
+        Vector3 dir = Camera.main.transform.forward;
+
+        // Instancia o projétil na frente da nave, sem parent
+        GameObject projGO = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
+
+        // Passa a direção pro script Projectile
+        Projectile proj = projGO.GetComponent<Projectile>();
+        if (proj != null)
+        {
+            proj.Init(dir);
+        }
     }
 }

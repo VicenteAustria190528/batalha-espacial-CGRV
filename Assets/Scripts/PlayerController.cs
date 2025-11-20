@@ -5,15 +5,22 @@ public class PlayerController : MonoBehaviour
     [Header("Velocidade")]
     public float minSpeed = 10f;
     public float maxSpeed = 40f;
-    public float acceleration = 10f; // quanto a velocidade muda por segundo
+    public float acceleration = 10f;
     public float currentSpeed = 15f;
 
     [Header("Rotação")]
-    public float rotationSpeed = 60f; // graus por segundo
+    public float rotationSpeed = 60f;
+
+    [Header("Limites de Altura")]
+    public float minY = 1.2f;   // Altura mínima (acima do piso)
+    public float maxY = 3f;     // Altura máxima
+
+    [Header("Limites de Pitch (ângulo X)")]
+    public float minPitch = -5f;   // quanto pode olhar para baixo
+    public float maxPitch = 25f;   // quanto pode olhar para cima
 
     void Start()
     {
-        // Garante que a velocidade inicial esteja dentro do intervalo
         currentSpeed = Mathf.Clamp(currentSpeed, minSpeed, maxSpeed);
     }
 
@@ -22,41 +29,52 @@ public class PlayerController : MonoBehaviour
         HandleSpeedControl();
         HandleRotation();
         MoveForward();
+        ClampHeight();
     }
 
     void HandleSpeedControl()
     {
-        // Aumentar velocidade (W ou seta pra cima)
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
-        {
             currentSpeed += acceleration * Time.deltaTime;
-        }
 
-        // Diminuir velocidade (S ou seta pra baixo)
         if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
-        {
             currentSpeed -= acceleration * Time.deltaTime;
-        }
 
         currentSpeed = Mathf.Clamp(currentSpeed, minSpeed, maxSpeed);
     }
 
     void HandleRotation()
     {
-        // Horizontal: A/D ou setas
-        float yawInput = Input.GetAxis("Horizontal");   // esquerda/direita
-        float pitchInput = Input.GetAxis("Vertical");   // cima/baixo
+        float yawInput = Input.GetAxis("Horizontal"); // esquerda/direita
+        float pitchInput = Input.GetAxis("Vertical"); // cima/baixo
 
-        // Yaw: girar para esquerda/direita (eixo Y)
-        transform.Rotate(0f, yawInput * rotationSpeed * Time.deltaTime, 0f);
+        // Pega rotação atual em Euler
+        Vector3 euler = transform.eulerAngles;
 
-        // Pitch: girar para cima/baixo (eixo X)
-        transform.Rotate(-pitchInput * rotationSpeed * Time.deltaTime, 0f, 0f);
+        // Converte o pitch para -180..180
+        float pitch = euler.x;
+        if (pitch > 180f) pitch -= 360f;
+
+        // Aplica entradas
+        pitch -= pitchInput * rotationSpeed * Time.deltaTime;   // invertido (cima/baixo)
+        float yaw = euler.y + yawInput * rotationSpeed * Time.deltaTime;
+
+        // Limita o pitch
+        pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
+
+        // Aplica rotação final (sempre z = 0 pra não "entortar" a nave)
+        transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
     }
 
     void MoveForward()
     {
-        // Avança sempre na direção em que a nave está apontando
         transform.position += transform.forward * currentSpeed * Time.deltaTime;
+    }
+
+    void ClampHeight()
+    {
+        Vector3 pos = transform.position;
+        pos.y = Mathf.Clamp(pos.y, minY, maxY);
+        transform.position = pos;
     }
 }

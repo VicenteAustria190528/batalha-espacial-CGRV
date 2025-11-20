@@ -2,28 +2,34 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
-    public float speed = 60f;
+    public float speed = 80f;      // bem mais rápido que a nave
     public float lifeTime = 3f;
 
-    private Rigidbody rb;
+    private Vector3 direction;     // direção fixa do tiro
+
+    // Chamado logo depois de instanciar
+    public void Init(Vector3 dir)
+    {
+        direction = dir.normalized;
+    }
+
+    void Update()
+    {
+        // anda sempre na mesma direção
+        transform.position += direction * speed * Time.deltaTime;
+    }
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        rb.velocity = transform.forward * speed;
-
-        // Destroi o projétil após alguns segundos
         Destroy(gameObject, lifeTime);
     }
 
-    // Mais tarde vamos usar isso pra detectar inimigos
     private void OnTriggerEnter(Collider other)
     {
-        // Exemplo futuro:
-        // if (other.CompareTag("Enemy"))
-        // {
-        //     Destroy(other.gameObject);
-        //     Destroy(gameObject);
-        // }
+        if (other.CompareTag("Enemy"))
+        {
+            Destroy(other.gameObject);
+            Destroy(gameObject);
+        }
     }
 }
