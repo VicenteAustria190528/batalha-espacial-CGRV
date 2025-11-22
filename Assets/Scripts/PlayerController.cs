@@ -2,79 +2,65 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("Velocidade")]
-    public float minSpeed = 10f;
-    public float maxSpeed = 40f;
-    public float acceleration = 10f;
-    public float currentSpeed = 15f;
+    [Header("Velocidade para frente")]
+    public float minSpeed = 20f;
+    public float maxSpeed = 50f;
+    public float acceleration = 5f;
+    public float currentSpeed = 25f;
 
-    [Header("Rotação")]
-    public float rotationSpeed = 60f;
+    [Header("Movimento lateral")]
+    public float lateralSpeed = 15f;
+    public float minX = -10f;    // limite esquerdo dentro do corredor
+    public float maxX = 10f;     // limite direito dentro do corredor
 
-    [Header("Limites de Altura")]
-    public float minY = 1.2f;   // Altura mínima (acima do piso)
-    public float maxY = 3f;     // Altura máxima
+    [Header("Visual da nave (opcional)")]
+    public Transform shipModel;      // arraste seu modelo de nave aqui
+    public float maxRollAngle = 25f; // inclinação visual ao mover
+    public float rollSpeed = 5f;
 
-    [Header("Limites de Pitch (ângulo X)")]
-    public float minPitch = -5f;   // quanto pode olhar para baixo
-    public float maxPitch = 25f;   // quanto pode olhar para cima
-
-    void Start()
+    private void Update()
     {
+        // Entrada vertical (W/S ou setas) apenas para acelerar/desacelerar
+        float accelInput = Input.GetAxis("Vertical"); // pode deixar 0 se não quiser isso
+
+        currentSpeed += accelInput * acceleration * Time.deltaTime;
         currentSpeed = Mathf.Clamp(currentSpeed, minSpeed, maxSpeed);
+
+        // Entrada horizontal (A/D ou setas) para andar para os lados
+        float horizontal = Input.GetAxis("Horizontal");
+
+        Vector3 position = transform.position;
+
+        // Movimento para frente contínuo
+        position += transform.forward * currentSpeed * Time.deltaTime;
+
+        // Movimento lateral no eixo X (mundo)
+        position += Vector3.right * horizontal * lateralSpeed * Time.deltaTime;
+
+        // Limita o player dentro do corredor
+        position.x = Mathf.Clamp(position.x, minX, maxX);
+
+        transform.position = position;
+
+        // Mantém a nave sempre apontando para frente (sem girar com o input)
+        // Se quiser rotação real, a gente adiciona depois; por enquanto é rail shooter.
+
+        AtualizarRollVisual(horizontal);
     }
 
-    void Update()
+    private void AtualizarRollVisual(float horizontal)
     {
-        HandleSpeedControl();
-        HandleRotation();
-        MoveForward();
-        ClampHeight();
-    }
+        if (shipModel == null)
+            return;
 
-    void HandleSpeedControl()
-    {
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
-            currentSpeed += acceleration * Time.deltaTime;
+        // Inclina a nave para o lado oposto ao movimento
+        float targetRoll = -horizontal * maxRollAngle;
+        Quaternion targetRot = Quaternion.Euler(0f, 0f, targetRoll);
 
-        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
-            currentSpeed -= acceleration * Time.deltaTime;
-
-        currentSpeed = Mathf.Clamp(currentSpeed, minSpeed, maxSpeed);
-    }
-
-    void HandleRotation()
-    {
-        float yawInput = Input.GetAxis("Horizontal"); // esquerda/direita
-        float pitchInput = Input.GetAxis("Vertical"); // cima/baixo
-
-        // Pega rotação atual em Euler
-        Vector3 euler = transform.eulerAngles;
-
-        // Converte o pitch para -180..180
-        float pitch = euler.x;
-        if (pitch > 180f) pitch -= 360f;
-
-        // Aplica entradas
-        pitch -= pitchInput * rotationSpeed * Time.deltaTime;   // invertido (cima/baixo)
-        float yaw = euler.y + yawInput * rotationSpeed * Time.deltaTime;
-
-        // Limita o pitch
-        pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
-
-        // Aplica rotação final (sempre z = 0 pra não "entortar" a nave)
-        transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
-    }
-
-    void MoveForward()
-    {
-        transform.position += transform.forward * currentSpeed * Time.deltaTime;
-    }
-
-    void ClampHeight()
-    {
-        Vector3 pos = transform.position;
-        pos.y = Mathf.Clamp(pos.y, minY, maxY);
-        transform.position = pos;
+        shipModel.localRotation = Quaternion.Slerp(
+            shipModel.localRotation,
+            targetRot,
+            Time.deltaTime * rollSpeed
+        );
     }
 }
