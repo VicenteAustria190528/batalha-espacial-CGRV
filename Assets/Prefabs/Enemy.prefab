@@ -149,3 +149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
+  lateralAmplitude: 4
+  lateralSpeed: 2
+  verticalAmplitude: 2
+  verticalSpeed: 1.5
