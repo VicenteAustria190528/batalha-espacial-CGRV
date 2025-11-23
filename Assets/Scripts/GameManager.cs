@@ -1,18 +1,22 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
     [Header("Configuração da fase")]
-    public int targetEnemies = 10;   // meta de inimigos destruídos (usaremos na próxima sprint)
-    public float levelTime = 60f;    // tempo total da fase em segundos
+    public int targetEnemies = 10;
+    public float levelTime = 60f;
 
     [Header("Referências de UI")]
     public TMP_Text killsText;
     public TMP_Text timerText;
     public TMP_Text messageText;
+
+    [Header("Menu de fim de jogo")]
+    public GameObject endMenuPanel;
 
     public int EnemiesDestroyed { get; private set; }
 
@@ -21,7 +25,6 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
-        // Singleton simples
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -29,27 +32,46 @@ public class GameManager : MonoBehaviour
         }
 
         Instance = this;
-        // Se depois tivermos várias cenas (menu/jogo) podemos usar:
-        // DontDestroyOnLoad(gameObject);
     }
 
     private void Start()
     {
+        int diff = PlayerPrefs.GetInt("Difficulty", 1);
+
+        switch (diff)
+        {
+            case 0: targetEnemies = 5; break;
+            case 1: targetEnemies = 5; break;
+            case 2: targetEnemies = 10; break;
+        }
+
         remainingTime = levelTime;
         EnemiesDestroyed = 0;
 
         if (messageText != null)
             messageText.gameObject.SetActive(false);
 
+        if (endMenuPanel != null)
+            endMenuPanel.SetActive(false);
+
         AtualizarHUD();
     }
 
     private void Update()
     {
+        // 👉 Atalhos de teclado mesmo durante Game Over
+        if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+        {
+            if (Input.GetKeyDown(KeyCode.R))
+                ReiniciarFase();
+
+            if (Input.GetKeyDown(KeyCode.M))
+                VoltarParaMenu();
+        }
+
         if (isGameOver)
             return;
 
-        // Atualiza o cronômetro
         remainingTime -= Time.deltaTime;
         if (remainingTime <= 0f)
         {
@@ -62,13 +84,10 @@ public class GameManager : MonoBehaviour
 
     public void RegistrarInimigoDestruido()
     {
-        if (isGameOver)
-            return;
+        if (isGameOver) return;
 
         EnemiesDestroyed++;
         AtualizarKillsUI();
-
-        // Aqui futuramente vamos checar vitória (quando tiver linha de chegada, etc.)
     }
 
     private void AtualizarHUD()
@@ -80,57 +99,80 @@ public class GameManager : MonoBehaviour
     private void AtualizarKillsUI()
     {
         if (killsText != null)
-        {
             killsText.text = $"Inimigos: {EnemiesDestroyed}/{targetEnemies}";
-        }
     }
 
     private void AtualizarTimerUI()
     {
         if (timerText != null)
-        {
             timerText.text = $"Tempo: {remainingTime:0.0}s";
-        }
     }
 
-    private void MostrarMensagem(string mensagem)
+    private void MostrarMensagem(string msg)
     {
         if (messageText != null)
         {
             messageText.gameObject.SetActive(true);
-            messageText.text = mensagem;
+            messageText.text = msg;
         }
+
+        if (endMenuPanel != null)
+            endMenuPanel.SetActive(true);
     }
+
+    // ---------------- RESULTADOS ----------------
 
     public void DerrotaPorTempo()
     {
-        if (isGameOver)
-            return;
-
+        if (isGameOver) return;
         isGameOver = true;
-        MostrarMensagem("DERROTA! Tempo esgotado.");
-        Time.timeScale = 0f; // pausa o jogo
-    }
 
-    // Função de vitória que vamos usar na próxima sprint
-    public void Vitoria()
-    {
-        if (isGameOver)
-            return;
-
-        isGameOver = true;
-        MostrarMensagem("VITÓRIA!");
         Time.timeScale = 0f;
+        MostrarMensagem("DERROTA! Tempo esgotado.");
     }
 
-    // Podemos usar esta futuramente para colisão com inimigos/asteroides
     public void DerrotaPorColisao()
     {
-        if (isGameOver)
-            return;
-
+        if (isGameOver) return;
         isGameOver = true;
-        MostrarMensagem("DERROTA! Nave destruída.");
+
         Time.timeScale = 0f;
+        MostrarMensagem("DERROTA!");
+    }
+
+    public void Vitoria()
+    {
+        if (isGameOver) return;
+        isGameOver = true;
+
+        Time.timeScale = 0f;
+        MostrarMensagem("VITÓRIA!");
+    }
+
+    public void ChecarVitoriaAoChegarNoFim()
+    {
+        if (isGameOver) return;
+
+        if (EnemiesDestroyed >= targetEnemies)
+            Vitoria();
+        else
+        {
+            MostrarMensagem("Você chegou ao fim, mas não destruiu inimigos suficientes!");
+            DerrotaPorColisao();
+        }
+    }
+
+    // ---------- BOTÕES DO MENU FINAL ----------
+
+    public void ReiniciarFase()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void VoltarParaMenu()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("MainMenu 1");
     }
 }
