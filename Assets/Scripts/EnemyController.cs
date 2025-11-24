@@ -13,14 +13,15 @@ public class EnemyController : MonoBehaviour
     public float verticalAmplitude = 2f;
     public float verticalSpeed = 1.5f;
 
+    // limite de altura (evita atravessar o Floor)
+    public float minY = 0.5f;   
+
     private float initialY;
     private float initialX;
 
-    // Movimentos diferentes por inimigo
     private float phaseOffsetX;
     private float phaseOffsetY;
 
-    // dificuldade carregada
     private int difficulty;
 
     private void Start()
@@ -28,14 +29,11 @@ public class EnemyController : MonoBehaviour
         initialY = transform.position.y;
         initialX = transform.position.x;
 
-        // pega a dificuldade
         difficulty = PlayerPrefs.GetInt("Difficulty", 1);
 
-        // offsets aleatórios
         phaseOffsetX = Random.Range(0f, 10f);
         phaseOffsetY = Random.Range(0f, 10f);
 
-        // DIFÍCIL = aumenta movimento
         if (difficulty == 2)
         {
             lateralAmplitude *= 1.4f;
@@ -44,12 +42,11 @@ public class EnemyController : MonoBehaviour
             verticalSpeed *= 1.3f;
         }
 
-        // FÁCIL = completamente parado
         if (difficulty == 0)
         {
-            speed = 0f;              // não anda pra frente
-            lateralAmplitude = 0f;   // não mexe pros lados
-            verticalAmplitude = 0f;  // não mexe verticalmente
+            speed = 0f;
+            lateralAmplitude = 0f;
+            verticalAmplitude = 0f;
         }
     }
 
@@ -57,15 +54,17 @@ public class EnemyController : MonoBehaviour
     {
         Vector3 pos = transform.position;
 
-        // Movimento pra frente (fica 0 no fácil)
         pos += Vector3.back * speed * Time.deltaTime;
 
-        // Somente se NÃO for fácil
         if (difficulty != 0)
         {
             pos.x = initialX + Mathf.Sin((Time.time * lateralSpeed) + phaseOffsetX) * lateralAmplitude;
             pos.y = initialY + Mathf.Sin((Time.time * verticalSpeed) + phaseOffsetY) * verticalAmplitude;
         }
+
+        // 🔥 AQUI RESOLVE O PROBLEMA:
+        // impede o inimigo de ficar abaixo do chão
+        pos.y = Mathf.Max(pos.y, minY);
 
         transform.position = pos;
     }
