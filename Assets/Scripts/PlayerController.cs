@@ -4,8 +4,8 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Velocidade para frente")]
     public float minSpeed = 20f;
-    public float maxSpeed = 50f;
-    public float acceleration = 5f;
+    public float maxSpeed = 60f;
+    public float acceleration = 15f;
     public float currentSpeed = 25f;
 
     [Header("Movimento lateral")]
@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Limite vertical")]
     public float minY = -2f;
-    public float maxY = 5f;
+    public float maxY = 0f;
 
     [Header("Rotação (pitch)")]
     public float pitchSpeed = 45f;

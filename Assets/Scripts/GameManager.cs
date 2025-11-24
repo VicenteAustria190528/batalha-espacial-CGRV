@@ -145,6 +145,9 @@ public class GameManager : MonoBehaviour
         if (isGameOver) return;
         isGameOver = true;
 
+        // SALVA O RECORD NO RANKING
+        SalvarMelhorPontuacao();
+
         Time.timeScale = 0f;
         MostrarMensagem("VITÓRIA!");
     }
@@ -162,6 +165,24 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void SalvarMelhorPontuacao()
+{
+    // dificuldade atual (0 = fácil, 1 = médio, 2 = difícil)
+    int diff = PlayerPrefs.GetInt("Difficulty", 1);
+
+    string key = $"BestScore_{diff}";
+
+    int best = PlayerPrefs.GetInt(key, 0);
+
+    // salva somente se for maior que o recorde anterior
+    if (EnemiesDestroyed > best)
+    {
+        PlayerPrefs.SetInt(key, EnemiesDestroyed);
+        PlayerPrefs.Save();
+        Debug.Log($"Novo recorde salvo! Dif: {diff}  Score: {EnemiesDestroyed}");
+    }
+}
+
     // ---------- BOTÕES DO MENU FINAL ----------
 
     public void ReiniciarFase()
@@ -170,9 +191,10 @@ public class GameManager : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    public void VoltarParaMenu()
-    {
-        Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenu 1");
-    }
+  public void VoltarParaMenu()
+{
+    Time.timeScale = 1f;
+    SceneManager.LoadScene("MainMenu 1");
+}
+
 }

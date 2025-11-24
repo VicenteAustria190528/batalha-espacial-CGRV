@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 2370869935497306754}
   - component: {fileID: 6007455324771596181}
   - component: {fileID: 2028837060115181150}
+  - component: {fileID: -1928890908861631222}
   m_Layer: 0
   m_Name: Projectile
   m_TagString: Untagged
@@ -134,7 +135,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
 --- !u!135 &6007455324771596181
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -150,7 +151,7 @@ SphereCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -170,3 +171,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 60
   lifeTime: 3
+--- !u!65 &-1928890908861631222
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 829266059894074697}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}

@@ -7,6 +7,7 @@ public class Projectile : MonoBehaviour
     public float lifeTime = 3f;    // tempo até sumir sozinho
 
     private Vector3 direction;     // direção fixa do tiro
+    private bool alreadyHit = false; // evita contar mais de 1 kill
 
     // Chamado logo depois de instanciar (pelo script de tiro)
     public void Init(Vector3 dir)
@@ -28,12 +29,18 @@ public class Projectile : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // já bateu em algo antes? então ignora
+        if (alreadyHit) return;
+
         // Se bater no jogador, ignora
         if (other.CompareTag("Player"))
             return;
 
         if (other.CompareTag("Enemy"))
         {
+            alreadyHit = true;  // garante que só conta uma vez
+
+            // destrói o inimigo
             Destroy(other.gameObject);
 
             // Conta kill no GameManager
@@ -42,6 +49,7 @@ public class Projectile : MonoBehaviour
                 GameManager.Instance.RegistrarInimigoDestruido();
             }
 
+            // destrói o projétil
             Destroy(gameObject);
         }
         else
@@ -50,5 +58,4 @@ public class Projectile : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
 }
