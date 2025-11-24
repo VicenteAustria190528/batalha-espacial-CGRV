@@ -96,13 +96,4 @@ public class PlayerController : MonoBehaviour
         shipModel.localRotation = Quaternion.Euler(currentPitch, 0f, currentRoll);
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Floor"))
-        {
-            Vector3 pos = transform.position;
-            pos.y = Mathf.Max(pos.y, minY);
-            transform.position = pos;
-        }
-    }
 }
