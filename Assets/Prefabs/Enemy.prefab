@@ -146,6 +146,9 @@ MonoBehaviour:
   lateralSpeed: 2
   verticalAmplitude: 2
   verticalSpeed: 1.5
+  minY: 0.5
+  deathClip: {fileID: 8300000, guid: b3eb184929850464d9ec9276dd211c2b, type: 3}
+  deathVolume: 0.4
 --- !u!65 &-5037531192559552151
 BoxCollider:
   m_ObjectHideFlags: 0

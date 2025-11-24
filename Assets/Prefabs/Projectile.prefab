@@ -171,6 +171,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 60
   lifeTime: 3
+  enemyExplosionClip: {fileID: 8300000, guid: 070479c075296044e98f027ad414fb48, type: 3}
+  enemyExplosionVolume: 0.452
 --- !u!65 &-1928890908861631222
 BoxCollider:
   m_ObjectHideFlags: 0

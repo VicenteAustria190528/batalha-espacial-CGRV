@@ -8,6 +8,20 @@ public class Shooting : MonoBehaviour
 
     private float nextFireTime = 0f;
 
+    // ------- ÁUDIO DO TIRO -------
+    [Header("Áudio do tiro")]
+    public AudioClip fireClip;                 // som da arma (arma_laser)
+    [Range(0f, 1f)] public float fireVolume = 1f;
+
+    private AudioSource audioSource;           // vai usar o mesmo AudioSource da nave
+    // -----------------------------
+
+    private void Awake()
+    {
+        // pega o AudioSource que já está na nave (o mesmo do motor / efeitos)
+        audioSource = GetComponent<AudioSource>();
+    }
+
     void Update()
     {
         bool fireInput = Input.GetMouseButton(0) || Input.GetKey(KeyCode.Space);
@@ -38,6 +52,12 @@ public class Shooting : MonoBehaviour
         if (proj != null)
         {
             proj.Init(dir);
+        }
+
+        // ----- TOCAR SOM DO TIRO -----
+        if (audioSource != null && fireClip != null)
+        {
+            audioSource.PlayOneShot(fireClip, fireVolume);
         }
     }
 }
