@@ -5,11 +5,8 @@ Repositório GitHub:
 https://github.com/VicenteAustria190528/batalha-espacial-CGRV/tree/main
 
 Executável (Windows):
-
-
-
 Vídeo demonstrativo:
-
+https://drive.google.com/drive/u/1/folders/1VN_hMdXFHJfGaoutJ7Ema0tojAcODLaM
 
 Integrantes:
 - Pablo Jung – 199736
