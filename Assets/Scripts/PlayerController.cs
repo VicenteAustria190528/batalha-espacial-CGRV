@@ -27,24 +27,20 @@ public class PlayerController : MonoBehaviour
     private float currentPitch = 0f;
     private float currentRoll = 0f;
 
-    // ---------- ÁUDIO ----------
     [Header("Áudio")]
-    public AudioClip acelerarClip;   // som de acelerar (Shift)
+    public AudioClip acelerarClip; 
     [Range(0f, 1f)] public float acelerarVolume = 1f;
 
-    public AudioClip frearClip;      // som de frear (Ctrl)
+    public AudioClip frearClip;    
     [Range(0f, 1f)] public float frearVolume = 1f;
 
-    private AudioSource audioSource; // mesmo AudioSource do motor em loop
-    // ---------------------------
+    private AudioSource audioSource; 
 
     private void Start()
     {
-        // Garante que nunca vamos permitir Y menor que o chão (0)
         if (minY < 0f)
             minY = 0f;
 
-        // Se o player começar abaixo do mínimo, já sobe para a altura mínima
         Vector3 pos = transform.position;
         if (pos.y < minY)
         {
@@ -58,7 +54,6 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        // -------- ACELERAÇÃO PARA FRENTE --------
         float accelInput = 0f;
 
         bool acelerando = Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift);
@@ -69,12 +64,9 @@ public class PlayerController : MonoBehaviour
         else if (freiando)
             accelInput = -1f;
 
-        // -------- TOCAR SONS --------
         bool acelerandoDown = Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift);
         bool freiandoDown   = Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl);
 
-        // aqui garantimos que só UM som toca por frame
-        // (priorizei frear; se quiser o contrário é só inverter a ordem dos if)
         if (freiandoDown && !acelerandoDown)
         {
             if (audioSource != null && frearClip != null)
@@ -85,14 +77,12 @@ public class PlayerController : MonoBehaviour
             if (audioSource != null && acelerarClip != null)
                 audioSource.PlayOneShot(acelerarClip, acelerarVolume);
         }
-        // ---------------------------------------
 
         currentSpeed += accelInput * acceleration * Time.deltaTime;
         currentSpeed = Mathf.Clamp(currentSpeed, minSpeed, maxSpeed);
 
-        // -------- INPUT DE MOVIMENTO --------
         float horizontal = Input.GetAxis("Horizontal");
-        float vertical   = Input.GetAxis("Vertical"); // W/S continuam funcionando
+        float vertical   = Input.GetAxis("Vertical"); 
 
         // Shift também sobe, Ctrl também desce
         if (acelerando)
@@ -106,27 +96,21 @@ public class PlayerController : MonoBehaviour
 
         Vector3 position = transform.position;
 
-        // ANDAR PARA FRENTE
         position += Vector3.forward * currentSpeed * Time.deltaTime;
 
-        // MOVIMENTO LATERAL (X) E VERTICAL (Y)
         position += Vector3.right * horizontal * lateralSpeed * Time.deltaTime;
         position += Vector3.up    * vertical   * lateralSpeed * Time.deltaTime;
 
-        // LIMITES HORIZONTAIS
         position.x = Mathf.Clamp(position.x, minX, maxX);
 
-        // SOMENTE LIMITE INFERIOR
         if (position.y < minY)
             position.y = minY;
 
         transform.position = position;
 
-        // -------- PITCH VISUAL --------
         float pitchDelta = -vertical * pitchSpeed * Time.deltaTime;
         currentPitch = Mathf.Clamp(currentPitch + pitchDelta, -maxPitchAngle, maxPitchAngle);
 
-        // -------- ROLL VISUAL --------
         float targetRoll = -horizontal * maxRollAngle;
         currentRoll = Mathf.Lerp(currentRoll, targetRoll, Time.deltaTime * rollSpeed);
 

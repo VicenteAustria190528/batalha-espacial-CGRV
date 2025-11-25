@@ -13,7 +13,7 @@ public class EnemyController : MonoBehaviour
     public float verticalAmplitude = 2f;
     public float verticalSpeed = 1.5f;
 
-    // limite de altura (evita atravessar o Floor)
+    // limite de altura 
     public float minY = 0.5f;
 
     [Header("Áudio")]
@@ -66,13 +66,11 @@ public class EnemyController : MonoBehaviour
             pos.y = initialY + Mathf.Sin((Time.time * verticalSpeed) + phaseOffsetY) * verticalAmplitude;
         }
 
-        // impede o inimigo de ficar abaixo do chão
         pos.y = Mathf.Max(pos.y, minY);
 
         transform.position = pos;
     }
 
-    // Chamado quando o inimigo é destruído pelo projétil
     public void Morrer()
     {
         if (deathClip != null)
@@ -88,8 +86,7 @@ public class EnemyController : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             GameManager.Instance.DerrotaPorColisao();
-            // aqui você decide se quer ou não explodir o inimigo também
-            // Morrer();
+ 
         }
     }
 }

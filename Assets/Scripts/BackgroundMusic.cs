@@ -9,7 +9,6 @@ public class BackgroundMusic : MonoBehaviour
 
     private void Awake()
     {
-        // Garante que só exista UM BackgroundMusic na cena inteira
         BackgroundMusic[] musics = FindObjectsOfType<BackgroundMusic>();
         if (musics.Length > 1)
         {
@@ -23,7 +22,6 @@ public class BackgroundMusic : MonoBehaviour
 
         if (audioSource != null && audioSource.clip != null)
         {
-            // Garante que o startTime não passe do tamanho da música
             startTime = Mathf.Clamp(startTime, 0f, audioSource.clip.length - 0.01f);
 
             audioSource.time = startTime;  // pula para X segundos

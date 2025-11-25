@@ -45,8 +45,7 @@ public class MainMenuManager : MonoBehaviour
         PlayerPrefs.SetInt("Difficulty", selectedDifficulty);
         PlayerPrefs.Save();
 
-        // 👉 carrega pela POSIÇÃO no Build Settings (índice 1)
-        // 0 = MainMenu, 1 = SampleScene
+
        SceneManager.LoadScene("SampleScene");
     }
 

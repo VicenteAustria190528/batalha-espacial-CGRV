@@ -59,7 +59,6 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        // 👉 Atalhos de teclado mesmo durante Game Over
         if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
         {
             if (Input.GetKeyDown(KeyCode.R))
@@ -120,7 +119,6 @@ public class GameManager : MonoBehaviour
             endMenuPanel.SetActive(true);
     }
 
-    // ---------------- RESULTADOS ----------------
 
     public void DerrotaPorTempo()
     {
@@ -145,7 +143,6 @@ public class GameManager : MonoBehaviour
         if (isGameOver) return;
         isGameOver = true;
 
-        // SALVA O RECORD NO RANKING
         SalvarMelhorPontuacao();
 
         Time.timeScale = 0f;
@@ -167,14 +164,12 @@ public class GameManager : MonoBehaviour
 
     private void SalvarMelhorPontuacao()
 {
-    // dificuldade atual (0 = fácil, 1 = médio, 2 = difícil)
     int diff = PlayerPrefs.GetInt("Difficulty", 1);
 
     string key = $"BestScore_{diff}";
 
     int best = PlayerPrefs.GetInt(key, 0);
 
-    // salva somente se for maior que o recorde anterior
     if (EnemiesDestroyed > best)
     {
         PlayerPrefs.SetInt(key, EnemiesDestroyed);
@@ -183,7 +178,6 @@ public class GameManager : MonoBehaviour
     }
 }
 
-    // ---------- BOTÕES DO MENU FINAL ----------
 
     public void ReiniciarFase()
     {

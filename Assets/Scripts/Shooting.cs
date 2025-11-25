@@ -8,17 +8,16 @@ public class Shooting : MonoBehaviour
 
     private float nextFireTime = 0f;
 
-    // ------- ÁUDIO DO TIRO -------
     [Header("Áudio do tiro")]
     public AudioClip fireClip;                 // som da arma (arma_laser)
     [Range(0f, 1f)] public float fireVolume = 1f;
 
-    private AudioSource audioSource;           // vai usar o mesmo AudioSource da nave
-    // -----------------------------
+    private AudioSource audioSource;          
+  
 
     private void Awake()
     {
-        // pega o AudioSource que já está na nave (o mesmo do motor / efeitos)
+       
         audioSource = GetComponent<AudioSource>();
     }
 
@@ -41,20 +40,17 @@ public class Shooting : MonoBehaviour
             return;
         }
 
-        // Direção = direção da CÂMERA
         Vector3 dir = Camera.main.transform.forward;
 
-        // Instancia o projétil na frente da nave, sem parent
         GameObject projGO = Instantiate(projectilePrefab, firePoint.position, Quaternion.identity);
 
-        // Passa a direção pro script Projectile
         Projectile proj = projGO.GetComponent<Projectile>();
         if (proj != null)
         {
             proj.Init(dir);
         }
 
-        // ----- TOCAR SOM DO TIRO -----
+        // TOCAR SOM DO TIRO
         if (audioSource != null && fireClip != null)
         {
             audioSource.PlayOneShot(fireClip, fireVolume);

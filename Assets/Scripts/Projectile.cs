@@ -3,17 +3,16 @@ using UnityEngine;
 public class Projectile : MonoBehaviour
 {
     [Header("Configuração do projétil")]
-    public float speed = 80f;      // bem mais rápido que a nave
-    public float lifeTime = 3f;    // tempo até sumir sozinho
+    public float speed = 80f;      
+    public float lifeTime = 3f;   
 
-    private Vector3 direction;       // direção fixa do tiro
-    private bool alreadyHit = false; // evita contar mais de 1 hit
+    private Vector3 direction;      
+    private bool alreadyHit = false; 
 
     [Header("Áudio (fallback)")]
-    public AudioClip enemyExplosionClip;              // som genérico de explosão
+    public AudioClip enemyExplosionClip;          
     [Range(0f, 1f)] public float enemyExplosionVolume = 1f;
 
-    // Chamado logo depois de instanciar (pelo script de tiro)
     public void Init(Vector3 dir)
     {
         direction = dir.normalized;
@@ -21,22 +20,18 @@ public class Projectile : MonoBehaviour
 
     private void Start()
     {
-        // Destroi o projétil depois de um tempo se não acertar nada
         Destroy(gameObject, lifeTime);
     }
 
     private void Update()
     {
-        // Anda sempre na mesma direção
         transform.position += direction * speed * Time.deltaTime;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        // já bateu em algo antes? então ignora
         if (alreadyHit) return;
 
-        // Se bater no jogador, ignora (quem cuida disso é outro script)
         if (other.CompareTag("Player"))
             return;
 
@@ -44,16 +39,14 @@ public class Projectile : MonoBehaviour
         {
             alreadyHit = true;
 
-            // tenta usar o EnemyController primeiro
             EnemyController enemy = other.GetComponent<EnemyController>();
 
             if (enemy != null)
             {
-                enemy.Morrer(); // ele toca o próprio som e se destrói
+                enemy.Morrer();
             }
             else
             {
-                // fallback: usa som genérico do projétil, se configurado
                 if (enemyExplosionClip != null)
                 {
                     AudioSource.PlayClipAtPoint(
@@ -77,7 +70,7 @@ public class Projectile : MonoBehaviour
         }
         else
         {
-            // Qualquer outra coisa (chão, parede, etc.) destrói só o projétil
+
             Destroy(gameObject);
         }
     }
