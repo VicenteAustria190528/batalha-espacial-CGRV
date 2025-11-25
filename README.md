@@ -1,6 +1,6 @@
 # Batalha Espacial
 
-Projeto prático da disciplina **CCC300 – Computação Gráfica e Realidade Virtual** (2025/2).
+Projeto prático da disciplina **Computação Gráfica e Realidade Virtual** (2025/2).
 
 Jogo de batalha espacial desenvolvido em Unity, no qual o jogador controla uma nave dentro de um corredor espacial limitado, desviando de asteroides e destruindo naves inimigas dentro de um tempo pré-determinado. O objetivo é atingir um número mínimo de inimigos destruídos e alcançar o fim da área de voo sem colidir.
 
