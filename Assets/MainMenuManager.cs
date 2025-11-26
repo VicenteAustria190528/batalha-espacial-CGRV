@@ -49,6 +49,16 @@ public class MainMenuManager : MonoBehaviour
        SceneManager.LoadScene("SampleScene");
     }
 
+    public void JogarVR()
+    {
+        Debug.Log("BOTÃO JOGAR (VR) CLICADO");
+
+        PlayerPrefs.SetInt("Difficulty", selectedDifficulty);
+        PlayerPrefs.Save();
+
+        SceneManager.LoadScene("SampleScene_VR");
+    }
+
     private void AtualizarDifficultyLabel()
     {
         if (difficultyLabel == null) return;
